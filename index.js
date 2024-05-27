@@ -44,6 +44,11 @@ const pool = new Pool({
   //       res.status(200).send('File uploaded and inserted into database.');
   //   });
   // });
+
+app.get('/',(req, res)=>{
+	res.send("hello and welcome")	
+})
+
 app.post('/upload', upload.single('file'), (req, res) => {
   let sheetData = [];
   const file = req.file;
