@@ -11,10 +11,10 @@ app.use(cors())
 const port = 3006;
 
 const pool = new Pool({
-    user: 'postgres',
+    user: 'weldx',
     host: 'localhost',
-    database: 'postgres',
-    password: 'subha123',
+    database: 'weldx',
+    password: 'weldx9001',
     port: 5432,
   });
 
