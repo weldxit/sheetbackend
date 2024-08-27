@@ -7,6 +7,12 @@ const XLSX = require("xlsx");
 const fs = require("fs");
 const app = express();
 app.use(cors());
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*'); // Or specify the origin you want to allow
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
+
 
 const port = 3006;
 
@@ -195,6 +201,22 @@ app.get("/sheets/:id", async (req, res) => {
   }
 });
 
+app.get("/sheets-tc/:id", async (req, res) => {
+  try {
+    const sheetId = req.params.id;
+    const result = await pool.query("SELECT * FROM tcbsheet WHERE id = $1", [sheetId]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).send("Sheet not found.");
+    }
+
+    const sheet = JSON.parse(result.rows[0].file);
+    res.status(200).json(sheet);
+  } catch (err) {
+    console.error("Error fetching sheet from database:", err);
+    res.status(500).send("Error fetching sheet from database.");
+  }
+});
 // Placeholder for "/get-finance"
 app.get('/get-finance', async (req, res) => {
   try {
