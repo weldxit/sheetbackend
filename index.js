@@ -7,18 +7,14 @@ const XLSX = require("xlsx");
 const fs = require("fs");
 const app = express();
 app.use(cors());
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*'); // Or specify the origin you want to allow
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
-});
+
 
 
 const port = 3006;
 
 const pool = new Pool({
   user: "weldx",
-  host: "localhost",
+  host: "propickproperty.in",
   database: "pnservice",
   password: "weldx9001",
   port: 5432,
