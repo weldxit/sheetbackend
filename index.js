@@ -3,12 +3,27 @@ const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const { Pool } = require("pg");
 const cors = require("cors");
+const bodyParser = require("body-parser"); 
 const XLSX = require("xlsx");
 const fs = require("fs");
 const app = express();
-app.use(cors());
+
+app.use(bodyParser.json());
 
 
+const allowedOrigins = ['https://live.vercel.app', 'http://localhost:3000', '127.0.0.1'];
+const corsOptions = {
+    origin: (origin, callback) => {
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,   
+ // Allow cookies for authenticated requests (if applicable)
+};
+app.use(cors(corsOptions));
 
 const port = 3006;
 
@@ -228,6 +243,11 @@ app.get('/get-finance', async (req, res) => {
     res.status(500).send("Error retrieving finance types from database.");
   }
 });
+
+app.post('/test-post', (req, res) => {
+  console.log(req.body);
+  res.send(req.body);
+})
 
 app.listen(port, () => {
   console.log(`server listening at port ${port}`);
