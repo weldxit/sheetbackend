@@ -23,7 +23,8 @@ const corsOptions = {
     credentials: true,   
  // Allow cookies for authenticated requests (if applicable)
 };
-app.use(cors(corsOptions));
+
+app.use(cors());
 
 const port = 3006;
 
