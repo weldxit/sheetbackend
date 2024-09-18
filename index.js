@@ -7,23 +7,27 @@ const bodyParser = require("body-parser");
 const XLSX = require("xlsx");
 const fs = require("fs");
 const app = express();
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = "i_love_my_india";
 
-app.use(bodyParser.json());
-app.use(cors())
 
-const allowedOrigins = ['https://live.vercel.app', 'http://localhost:3000', '127.0.0.1','*'];
-const corsOptions = {
-    origin: (origin, callback) => {
-        if (allowedOrigins.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    credentials: true,   
- // Allow cookies for authenticated requests (if applicable)
-};
-//app.use(cors(corsOptions));
+app.use(express.json());
+
+
+// const allowedOrigins = ['https://live.vercel.app', 'http://localhost:3000', '127.0.0.1'];
+// const corsOptions = {
+//     origin: (origin, callback) => {
+//         if (allowedOrigins.indexOf(origin) !== -1) {
+//             callback(null, true);
+//         } else {
+//             callback(new Error('Not allowed by CORS'));
+//         }
+//     },
+//     credentials: true,   
+//  // Allow cookies for authenticated requests (if applicable)
+// };
+
+app.use(cors());
 
 const port = 3006;
 
@@ -241,6 +245,64 @@ app.get('/get-finance', async (req, res) => {
   } catch (err) {
     console.error("Error retrieving finance types from database:", err);
     res.status(500).send("Error retrieving finance types from database.");
+  }
+});
+
+
+// app.post('/login', async (req, res) => {
+//   const { username, password } = req.body;
+//   console.log(username, password);
+
+//   try {
+//       // Query the database for the user
+//       const result = pool.query('SELECT * FROM user WHERE username = $1 AND password = $2', [username], password);
+//       console.log(result)
+//       // const user = result
+
+//       // if (!user) {
+//       //     return res.status(401).json({ message: 'Invalid username or password' });
+//       // }
+
+//       // // Compare the password with the hashed password stored in the database
+//       // // const isPasswordValid = await bcrypt.compare(password, user.password);
+//       // if (!isPasswordValid) {
+//       //     return res.status(401).json({ message: 'Invalid username or password' });
+//       // }
+
+//       // Generate JWT token
+//       // const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: '1h' });
+//       // console.log(token);
+//       // Return the token
+//       // res.json({ token });
+//   } catch (error) {
+//       console.error('Error during login:', error);
+//       res.status(500).json({ message: 'Internal server error' });
+//   }
+// });
+
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+  
+  try {
+    // Fetch the user from the database
+    const result = await pool.query('SELECT * FROM "user" WHERE username = $1 AND password = $2', [username, password]);
+    
+    if (result.rows.length === 0) {
+      // No user found
+      return res.status(401).json({ message: 'Invalid username or password' });
+    }
+    
+    // User found, generate JWT token
+    const user = result.rows[0];
+    // console.log(user)
+    const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: '1h' });
+    // console.log(token);
+    
+    // Return the token
+    res.json({ token });
+  } catch (error) {
+    console.error('Error during login:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
