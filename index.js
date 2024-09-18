@@ -3,7 +3,6 @@ const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const { Pool } = require("pg");
 const cors = require("cors");
-const bodyParser = require("body-parser"); 
 const XLSX = require("xlsx");
 const fs = require("fs");
 const app = express();
