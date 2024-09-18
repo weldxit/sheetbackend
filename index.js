@@ -9,9 +9,9 @@ const fs = require("fs");
 const app = express();
 
 app.use(bodyParser.json());
+app.use(cors())
 
-
-const allowedOrigins = ['https://live.vercel.app', 'http://localhost:3000', '127.0.0.1'];
+const allowedOrigins = ['https://live.vercel.app', 'http://localhost:3000', '127.0.0.1','*'];
 const corsOptions = {
     origin: (origin, callback) => {
         if (allowedOrigins.indexOf(origin) !== -1) {
@@ -23,7 +23,7 @@ const corsOptions = {
     credentials: true,   
  // Allow cookies for authenticated requests (if applicable)
 };
-app.use(cors(corsOptions));
+//app.use(cors(corsOptions));
 
 const port = 3006;
 
